@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+// a I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +37,16 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        self.count += 1;
+        let mut idx = self.count;
+        while idx > 1 {
+            let parent = idx / 2;
+            if (self.comparator)(&self.items[idx], &self.items[parent]) {
+                self.items.swap(idx, parent);
+            }
+            idx = parent;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -84,10 +93,33 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+
+        // 将堆顶元素与最后一个元素交换，并减少堆的大小
+        self.items.swap(1, self.count);
+        let result = self.items.pop();
+        self.count -= 1;
+
+        // 通过向下调整恢复堆的性质
+        let mut idx = 1;
+        while 2 * idx <= self.count {
+            let mut child = 2 * idx;
+            if child + 1 <= self.count && (self.comparator)(&self.items[child + 1], &self.items[child]) {
+                child += 1;
+            }
+            if (self.comparator)(&self.items[idx], &self.items[child]) {
+                break;
+            }
+            self.items.swap(idx, child);
+            idx = child;
+        }
+
+        result
     }
 }
+
 
 pub struct MinHeap;
 
